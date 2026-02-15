@@ -45,13 +45,68 @@ packages/
 
 ## Prerequisites
 
+### Required (to run the app)
+
 - [Node.js](https://nodejs.org/) >= v20.18.3
 - [Yarn](https://yarnpkg.com/) v2+
 - [Git](https://git-scm.com/)
+
+### Optional (only if modifying the ZK circuit)
+
+These are **not needed** to run the app — the compiled circuit and verifier contract are already included in the repo.
+
 - [Nargo](https://noir-lang.org/docs/getting_started/quick_start#installation) v1.0.0-beta.3
 - [bb (Barretenberg)](https://barretenberg.aztec.network/docs/getting_started/) v0.82.2
+- **Windows Users:** Nargo and bb require [WSL (Ubuntu)](https://learn.microsoft.com/en-us/windows/wsl/install). Install and run Noir commands inside WSL.
 
-> **Windows Users:** Noir (`nargo`, `bb`) requires WSL (Ubuntu). Install and run Noir commands inside WSL.
+<details>
+<summary><b>Installation steps for Nargo, bb, and WSL (click to expand)</b></summary>
+
+#### 1. Install WSL (Windows only)
+
+Open PowerShell as Administrator:
+
+```powershell
+wsl --install -d Ubuntu
+```
+
+Restart your PC, then open Ubuntu from the Start menu and set up a username/password.
+
+#### 2. Install Nargo (inside WSL / Linux / macOS)
+
+```bash
+curl -L https://raw.githubusercontent.com/noir-lang/noirup/refs/heads/main/install | bash
+source ~/.bashrc
+noirup -v 1.0.0-beta.3
+nargo --version   # Should show 1.0.0-beta.3
+```
+
+#### 3. Install bb (Barretenberg)
+
+```bash
+curl -L https://raw.githubusercontent.com/AztecProtocol/aztec-packages/refs/heads/next/barretenberg/bbup/install | bash
+source ~/.bashrc
+bbup -v 0.82.2
+bb --version   # Should show 0.82.2
+```
+
+#### 4. Recompile the circuit (after modifying `main.nr`)
+
+```bash
+# From WSL, navigate to the circuits folder
+cd /mnt/d/path-to-project/packages/circuits
+
+# Compile
+nargo compile
+
+# Generate verification key
+bb write_vk -b target/zkp_ivoting_testnet.json -o target/vk
+
+# Generate Solidity verifier
+bb contract -k target/vk -o ../../packages/hardhat/contracts/Verifier.sol
+```
+
+</details>
 
 ## Getting Started
 
