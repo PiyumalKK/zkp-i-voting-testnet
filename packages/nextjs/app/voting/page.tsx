@@ -103,8 +103,12 @@ const VotingPage: NextPage = () => {
                   5
                 </div>
               </div>
-              {network.targetNetwork.id === hardhat.id && <VoteWithBurnerHardhat />}
-              {network.targetNetwork.id === sepolia.id && <VoteWithBurnerSepolia />}
+              {network.targetNetwork.id === hardhat.id && (
+                <VoteWithBurnerHardhat />
+              )}
+              {network.targetNetwork.id === sepolia.id && (
+                <VoteWithBurnerSepolia />
+              )}
             </div>
 
             {/* Storage Management */}

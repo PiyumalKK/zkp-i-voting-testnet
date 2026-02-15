@@ -29,7 +29,9 @@ export const ReadOnlyFunctionForm = ({
   inheritedFrom,
   abi,
 }: ReadOnlyFunctionFormProps) => {
-  const [form, setForm] = useState<Record<string, any>>(() => getInitialFormState(abiFunction));
+  const [form, setForm] = useState<Record<string, any>>(() =>
+    getInitialFormState(abiFunction),
+  );
   const [result, setResult] = useState<unknown>();
   const { targetNetwork } = useTargetNetwork();
 
@@ -58,7 +60,7 @@ export const ReadOnlyFunctionForm = ({
     return (
       <ContractInput
         key={key}
-        setForm={updatedFormValue => {
+        setForm={(updatedFormValue) => {
           setResult(undefined);
           setForm(updatedFormValue);
         }}
@@ -81,7 +83,9 @@ export const ReadOnlyFunctionForm = ({
           {result !== null && result !== undefined && (
             <div className="bg-secondary rounded-3xl text-sm px-4 py-1.5 break-words overflow-auto">
               <p className="font-bold m-0 mb-1">Result:</p>
-              <pre className="whitespace-pre-wrap break-words">{displayTxResult(result, "sm")}</pre>
+              <pre className="whitespace-pre-wrap break-words">
+                {displayTxResult(result, "sm")}
+              </pre>
             </div>
           )}
         </div>
@@ -93,7 +97,9 @@ export const ReadOnlyFunctionForm = ({
           }}
           disabled={isFetching}
         >
-          {isFetching && <span className="loading loading-spinner loading-xs"></span>}
+          {isFetching && (
+            <span className="loading loading-spinner loading-xs"></span>
+          )}
           Read 📡
         </button>
       </div>

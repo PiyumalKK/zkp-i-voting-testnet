@@ -5,7 +5,10 @@ import { createSmartAccountClient } from "permissionless";
 import { toSafeSmartAccount } from "permissionless/accounts";
 import { createPimlicoClient } from "permissionless/clients/pimlico";
 import { createPublicClient, encodeFunctionData, http, toHex } from "viem";
-import { EntryPointVersion, entryPoint07Address } from "viem/account-abstraction";
+import {
+  EntryPointVersion,
+  entryPoint07Address,
+} from "viem/account-abstraction";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { sepolia } from "viem/chains";
 import { useAccount } from "wagmi";
@@ -129,18 +132,28 @@ const voteOnSepolia = async ({
   return { userOpHash };
 };
 
-export const VoteWithBurnerSepolia = ({ contractAddress }: { contractAddress?: `0x${string}` }) => {
+export const VoteWithBurnerSepolia = ({
+  contractAddress,
+}: {
+  contractAddress?: `0x${string}`;
+}) => {
   const [smartAccount, setSmartAccount] = useState<`0x${string}` | null>(null);
-  const [txStatus, setTxStatus] = useState<"idle" | "pending" | "success" | "error">("idle");
+  const [txStatus, setTxStatus] = useState<
+    "idle" | "pending" | "success" | "error"
+  >("idle");
   const [hasProofStored, setHasProofStored] = useState<boolean>(false);
   const [hasSuccessfulVote, setHasSuccessfulVote] = useState<boolean>(false);
   const [walletOwner, setWalletOwner] = useState<`0x${string}` | null>(null);
   const [smartAccountClient, setSmartAccountClient] = useState<any>(null);
-  const [votedSmartAccount, setVotedSmartAccount] = useState<`0x${string}` | null>(null);
+  const [votedSmartAccount, setVotedSmartAccount] = useState<
+    `0x${string}` | null
+  >(null);
   const { proofData, setProofData } = useChallengeState();
   const { address: userAddress } = useAccount();
 
-  const { data: contractInfo } = useDeployedContractInfo({ contractName: "Voting" });
+  const { data: contractInfo } = useDeployedContractInfo({
+    contractName: "Voting",
+  });
 
   // Reset client and owner when account/contract changes
   useEffect(() => {
@@ -160,14 +173,23 @@ export const VoteWithBurnerSepolia = ({ contractAddress }: { contractAddress?: `
     const checkAndLoadStoredData = () => {
       const effectiveContractAddress = contractAddress || contractInfo?.address;
       if (effectiveContractAddress && userAddress) {
-        const proofExists = hasStoredProof(effectiveContractAddress, userAddress);
-        const transactionResultExists = hasStoredTransactionResult(effectiveContractAddress, userAddress);
+        const proofExists = hasStoredProof(
+          effectiveContractAddress,
+          userAddress,
+        );
+        const transactionResultExists = hasStoredTransactionResult(
+          effectiveContractAddress,
+          userAddress,
+        );
 
         setHasProofStored(proofExists);
 
         if (proofExists && !proofData) {
           try {
-            const storedProof = loadProofFromLocalStorage(effectiveContractAddress, userAddress);
+            const storedProof = loadProofFromLocalStorage(
+              effectiveContractAddress,
+              userAddress,
+            );
             if (storedProof) {
               setProofData(storedProof);
             }
@@ -178,11 +200,15 @@ export const VoteWithBurnerSepolia = ({ contractAddress }: { contractAddress?: `
 
         if (transactionResultExists) {
           try {
-            const storedResult = loadTransactionResultFromLocalStorage(effectiveContractAddress, userAddress);
+            const storedResult = loadTransactionResultFromLocalStorage(
+              effectiveContractAddress,
+              userAddress,
+            );
             if (storedResult) {
               setTxStatus(storedResult.success ? "success" : "error");
               setHasSuccessfulVote(Boolean(storedResult.success));
-              const fromReceiptSA = storedResult.receipt?.smartAccountAddress as `0x${string}` | undefined;
+              const fromReceiptSA = storedResult.receipt
+                ?.smartAccountAddress as `0x${string}` | undefined;
               setVotedSmartAccount((fromReceiptSA as `0x${string}`) || null);
               // We only display the smart account publicly; owner is kept internal
             }
@@ -201,15 +227,21 @@ export const VoteWithBurnerSepolia = ({ contractAddress }: { contractAddress?: `
     };
 
     checkAndLoadStoredData();
-  }, [contractAddress, contractInfo?.address, userAddress, proofData, setProofData]);
+  }, [
+    contractAddress,
+    contractInfo?.address,
+    userAddress,
+    proofData,
+    setProofData,
+  ]);
 
   return (
     <div className="glass-card p-6 space-y-4">
       <div className="text-center">
         <h2 className="text-xl font-bold">Submit Vote</h2>
         <p className="text-xs text-base-content/40 mt-1">
-          Use an ERC-4337 smart account to submit the on-chain vote with the proof and let the tx be paid by a
-          paymaster
+          Use an ERC-4337 smart account to submit the on-chain vote with the
+          proof and let the tx be paid by a paymaster
         </p>
       </div>
 
@@ -223,17 +255,24 @@ export const VoteWithBurnerSepolia = ({ contractAddress }: { contractAddress?: `
       <div className="flex justify-center">
         <button
           className={`btn btn-primary btn-lg w-full shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all duration-200 ${txStatus === "pending" ? "loading" : ""}`}
-          disabled={!hasProofStored || !proofData || txStatus === "pending" || hasSuccessfulVote}
+          disabled={
+            !hasProofStored ||
+            !proofData ||
+            txStatus === "pending" ||
+            hasSuccessfulVote
+          }
           onClick={async () => {
             try {
               if (!proofData) {
                 console.error("Please generate proof first");
                 return;
               }
-              if (!contractInfo && !contractAddress) throw new Error("Contract not found");
+              if (!contractInfo && !contractAddress)
+                throw new Error("Contract not found");
 
               setTxStatus("pending");
-              const effectiveContractAddress = contractAddress || contractInfo?.address;
+              const effectiveContractAddress =
+                contractAddress || contractInfo?.address;
 
               let client = smartAccountClient;
               let currentSmartAccount = smartAccount;
@@ -249,8 +288,13 @@ export const VoteWithBurnerSepolia = ({ contractAddress }: { contractAddress?: `
                   setSmartAccount(currentSmartAccount);
                   setWalletOwner(currentWalletOwner);
                 } catch (err: any) {
-                  if (typeof err?.message === "string" && err.message.startsWith("Checkpoint 10")) {
-                    notification.info("Implement createSmartAccount is a TODO (Checkpoint 10). Please implement it.");
+                  if (
+                    typeof err?.message === "string" &&
+                    err.message.startsWith("Checkpoint 10")
+                  ) {
+                    notification.info(
+                      "Implement createSmartAccount is a TODO (Checkpoint 10). Please implement it.",
+                    );
                     setTxStatus("idle");
                     return;
                   }
@@ -265,12 +309,15 @@ export const VoteWithBurnerSepolia = ({ contractAddress }: { contractAddress?: `
                 smartAccountClient: client,
               });
 
-              if (!userOpHash) throw new Error("Receipt or user operation hash not found");
+              if (!userOpHash)
+                throw new Error("Receipt or user operation hash not found");
 
               try {
-                const receipt = await pimlicoClient.waitForUserOperationReceipt({
-                  hash: userOpHash,
-                });
+                const receipt = await pimlicoClient.waitForUserOperationReceipt(
+                  {
+                    hash: userOpHash,
+                  },
+                );
                 if (receipt.success) {
                   setTxStatus("success");
                   setHasSuccessfulVote(true);
@@ -288,7 +335,9 @@ export const VoteWithBurnerSepolia = ({ contractAddress }: { contractAddress?: `
                       userAddress,
                       enhancedReceipt,
                     );
-                    setVotedSmartAccount((currentSmartAccount as `0x${string}`) || null);
+                    setVotedSmartAccount(
+                      (currentSmartAccount as `0x${string}`) || null,
+                    );
                     // owner is not displayed; keep internal if needed
                   }
                 } else {
@@ -309,14 +358,22 @@ export const VoteWithBurnerSepolia = ({ contractAddress }: { contractAddress?: `
                       enhancedReceipt,
                       "User operation failed",
                     );
-                    setVotedSmartAccount((currentSmartAccount as `0x${string}`) || null);
+                    setVotedSmartAccount(
+                      (currentSmartAccount as `0x${string}`) || null,
+                    );
                     // owner is not displayed; keep internal if needed
                   }
                 }
               } catch (receiptError: any) {
-                console.warn("Error waiting for receipt, but transaction may have succeeded:", receiptError);
+                console.warn(
+                  "Error waiting for receipt, but transaction may have succeeded:",
+                  receiptError,
+                );
 
-                if (receiptError.name === "WaitForUserOperationReceiptTimeoutError") {
+                if (
+                  receiptError.name ===
+                  "WaitForUserOperationReceiptTimeoutError"
+                ) {
                   setTxStatus("success");
                   setHasSuccessfulVote(true);
                   if (effectiveContractAddress && userAddress) {
@@ -333,7 +390,9 @@ export const VoteWithBurnerSepolia = ({ contractAddress }: { contractAddress?: `
                       },
                       "Transaction submitted successfully but receipt timed out",
                     );
-                    setVotedSmartAccount((currentSmartAccount as `0x${string}`) || null);
+                    setVotedSmartAccount(
+                      (currentSmartAccount as `0x${string}`) || null,
+                    );
                     // owner is not displayed; keep internal if needed
                   }
                 } else {
@@ -344,14 +403,18 @@ export const VoteWithBurnerSepolia = ({ contractAddress }: { contractAddress?: `
               console.error("Error voting:", e);
               setTxStatus("error");
 
-              const effectiveContractAddress = contractAddress || contractInfo?.address;
+              const effectiveContractAddress =
+                contractAddress || contractInfo?.address;
               if (effectiveContractAddress && userAddress) {
                 saveTransactionResultToLocalStorage(
                   "",
                   false,
                   effectiveContractAddress,
                   userAddress,
-                  { smartAccountAddress: smartAccount, walletOwner: walletOwner },
+                  {
+                    smartAccountAddress: smartAccount,
+                    walletOwner: walletOwner,
+                  },
                   e instanceof Error ? e.message : "Unknown error occurred",
                 );
               }

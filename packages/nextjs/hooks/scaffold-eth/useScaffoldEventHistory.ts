@@ -2,7 +2,12 @@ import { useEffect, useState } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Abi, AbiEvent, ExtractAbiEventNames } from "abitype";
 import { BlockNumber, GetLogsParameters } from "viem";
-import { Config, UsePublicClientReturnType, useBlockNumber, usePublicClient } from "wagmi";
+import {
+  Config,
+  UsePublicClientReturnType,
+  useBlockNumber,
+  usePublicClient,
+} from "wagmi";
 import { useSelectedNetwork } from "~~/hooks/scaffold-eth";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
 import { AllowedChainIds } from "~~/utils/scaffold-eth";
@@ -15,7 +20,13 @@ import {
 } from "~~/utils/scaffold-eth/contract";
 
 const getEvents = async (
-  getLogsParams: GetLogsParameters<AbiEvent | undefined, AbiEvent[] | undefined, boolean, BlockNumber, BlockNumber>,
+  getLogsParams: GetLogsParameters<
+    AbiEvent | undefined,
+    AbiEvent[] | undefined,
+    boolean,
+    BlockNumber,
+    BlockNumber
+  >,
   publicClient?: UsePublicClientReturnType<Config, number>,
   Options?: {
     blockData?: boolean;
@@ -33,18 +44,22 @@ const getEvents = async (
   if (!logs) return undefined;
 
   const finalEvents = await Promise.all(
-    logs.map(async log => {
+    logs.map(async (log) => {
       return {
         ...log,
         blockData:
-          Options?.blockData && log.blockHash ? await publicClient?.getBlock({ blockHash: log.blockHash }) : null,
+          Options?.blockData && log.blockHash
+            ? await publicClient?.getBlock({ blockHash: log.blockHash })
+            : null,
         transactionData:
           Options?.transactionData && log.transactionHash
             ? await publicClient?.getTransaction({ hash: log.transactionHash })
             : null,
         receiptData:
           Options?.receiptData && log.transactionHash
-            ? await publicClient?.getTransactionReceipt({ hash: log.transactionHash })
+            ? await publicClient?.getTransactionReceipt({
+                hash: log.transactionHash,
+              })
             : null,
       };
     }),
@@ -88,7 +103,13 @@ export const useScaffoldEventHistory = <
   watch,
   enabled = true,
   blocksBatchSize = 500,
-}: UseScaffoldEventHistoryConfig<TContractName, TEventName, TBlockData, TTransactionData, TReceiptData>) => {
+}: UseScaffoldEventHistoryConfig<
+  TContractName,
+  TEventName,
+  TBlockData,
+  TTransactionData,
+  TReceiptData
+>) => {
   const selectedNetwork = useSelectedNetwork(chainId);
 
   const publicClient = usePublicClient({
@@ -96,7 +117,10 @@ export const useScaffoldEventHistory = <
   });
   const [isFirstRender, setIsFirstRender] = useState(true);
 
-  const { data: blockNumber } = useBlockNumber({ watch: watch, chainId: selectedNetwork.id });
+  const { data: blockNumber } = useBlockNumber({
+    watch: watch,
+    chainId: selectedNetwork.id,
+  });
 
   const { data: deployedContractData } = useDeployedContractInfo({
     contractName,
@@ -105,11 +129,17 @@ export const useScaffoldEventHistory = <
 
   const event =
     deployedContractData &&
-    ((deployedContractData.abi as Abi).find(part => part.type === "event" && part.name === eventName) as AbiEvent);
+    ((deployedContractData.abi as Abi).find(
+      (part) => part.type === "event" && part.name === eventName,
+    ) as AbiEvent);
 
-  const isContractAddressAndClientReady = Boolean(deployedContractData?.address) && Boolean(publicClient);
+  const isContractAddressAndClientReady =
+    Boolean(deployedContractData?.address) && Boolean(publicClient);
 
-  const fromBlockValue = fromBlock !== undefined ? fromBlock : BigInt(deployedContractData?.deployedOnBlock || 0);
+  const fromBlockValue =
+    fromBlock !== undefined
+      ? fromBlock
+      : BigInt(deployedContractData?.deployedOnBlock || 0);
 
   const query = useInfiniteQuery({
     queryKey: [
@@ -131,7 +161,8 @@ export const useScaffoldEventHistory = <
       // Calculate the toBlock for this batch
       let batchToBlock = toBlock;
       const batchEndBlock = pageParam + BigInt(blocksBatchSize) - 1n;
-      const maxBlock = toBlock || (blockNumber ? BigInt(blockNumber) : undefined);
+      const maxBlock =
+        toBlock || (blockNumber ? BigInt(blockNumber) : undefined);
       if (maxBlock) {
         batchToBlock = batchEndBlock < maxBlock ? batchEndBlock : maxBlock;
       }
@@ -157,9 +188,11 @@ export const useScaffoldEventHistory = <
 
       const lastPageHighestBlock = Math.max(
         Number(lastPageParam),
-        ...(lastPage || []).map(event => Number(event.blockNumber || 0)),
+        ...(lastPage || []).map((event) => Number(event.blockNumber || 0)),
       );
-      const nextBlock = BigInt(Math.max(Number(lastPageParam), lastPageHighestBlock) + 1);
+      const nextBlock = BigInt(
+        Math.max(Number(lastPageParam), lastPageHighestBlock) + 1,
+      );
 
       // Don't go beyond the specified toBlock or current block
       const maxBlock = toBlock && toBlock < blockNumber ? toBlock : blockNumber;
@@ -168,14 +201,15 @@ export const useScaffoldEventHistory = <
 
       return nextBlock;
     },
-    select: data => {
-      const events = data.pages.flat() as unknown as UseScaffoldEventHistoryData<
-        TContractName,
-        TEventName,
-        TBlockData,
-        TTransactionData,
-        TReceiptData
-      >;
+    select: (data) => {
+      const events =
+        data.pages.flat() as unknown as UseScaffoldEventHistoryData<
+          TContractName,
+          TEventName,
+          TBlockData,
+          TTransactionData,
+          TReceiptData
+        >;
 
       return {
         pages: events?.reverse(),
@@ -199,7 +233,12 @@ export const useScaffoldEventHistory = <
 
   // Manual trigger to fetch next page when previous page completes
   useEffect(() => {
-    if (query.status === "success" && query.hasNextPage && !query.isFetchingNextPage && !query.error) {
+    if (
+      query.status === "success" &&
+      query.hasNextPage &&
+      !query.isFetchingNextPage &&
+      !query.error
+    ) {
       query.fetchNextPage();
     }
   }, [query]);

@@ -10,15 +10,24 @@ export async function GET() {
       return NextResponse.json(JSON.parse(data));
     }
 
-    const fallbackFilePath = path.resolve(process.cwd(), "../circuits/target/circuits.json");
+    const fallbackFilePath = path.resolve(
+      process.cwd(),
+      "../circuits/target/circuits.json",
+    );
     if (fs.existsSync(fallbackFilePath)) {
       const data = fs.readFileSync(fallbackFilePath, "utf-8");
       return NextResponse.json(JSON.parse(data));
     }
 
-    return NextResponse.json({ error: "circuits.json not found" }, { status: 404 });
+    return NextResponse.json(
+      { error: "circuits.json not found" },
+      { status: 404 },
+    );
   } catch (error) {
     console.error("Error reading circuit data:", error);
-    return NextResponse.json({ error: "Failed to fetch circuit data" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch circuit data" },
+      { status: 500 },
+    );
   }
 }

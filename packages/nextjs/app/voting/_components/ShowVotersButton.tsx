@@ -1,7 +1,10 @@
 import { useMemo, useState } from "react";
 import { EyeIcon, UsersIcon } from "@heroicons/react/24/outline";
 import { Address } from "~~/components/scaffold-eth";
-import { useScaffoldEventHistory, useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+import {
+  useScaffoldEventHistory,
+  useScaffoldReadContract,
+} from "~~/hooks/scaffold-eth";
 
 export const ShowVotersButton = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -28,7 +31,10 @@ export const ShowVotersButton = () => {
         (voters as any[])
           .filter(Boolean)
           .map((row: any) => row?.args?.voter ?? row?.args?.[0])
-          .filter((voter: unknown): voter is string => typeof voter === "string" && voter.length > 0),
+          .filter(
+            (voter: unknown): voter is string =>
+              typeof voter === "string" && voter.length > 0,
+          ),
       ),
     );
     return addresses;
@@ -36,7 +42,11 @@ export const ShowVotersButton = () => {
 
   return (
     <>
-      <label htmlFor="show-voters-modal" className="btn btn-sm font-normal gap-1.5 border-base-content/10 bg-base-content/5 hover:bg-base-content/10 transition-all" onClick={openModal}>
+      <label
+        htmlFor="show-voters-modal"
+        className="btn btn-sm font-normal gap-1.5 border-base-content/10 bg-base-content/5 hover:bg-base-content/10 transition-all"
+        onClick={openModal}
+      >
         <UsersIcon className="h-4 w-4 text-primary" />
         <span>View Voters ({uniqueVoters.length})</span>
       </label>
@@ -73,13 +83,17 @@ const VoterStatus = ({ address }: { address: string }) => {
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-1">
           <span className="text-xs opacity-70">Status:</span>
-          <span className={`badge badge-sm ${isVoter ? "badge-success" : "badge-error"}`}>
+          <span
+            className={`badge badge-sm ${isVoter ? "badge-success" : "badge-error"}`}
+          >
             {isVoter ? "Allowed" : "Revoked"}
           </span>
         </div>
         <div className="flex items-center gap-1">
           <span className="text-xs opacity-70">Registered:</span>
-          <span className={`badge badge-sm ${hasRegistered ? "badge-info" : "badge-ghost"}`}>
+          <span
+            className={`badge badge-sm ${hasRegistered ? "badge-info" : "badge-ghost"}`}
+          >
             {hasRegistered ? "Yes" : "No"}
           </span>
         </div>
@@ -103,9 +117,22 @@ const ShowVotersModal = ({
 }) => {
   return (
     <>
-      <input type="checkbox" id="show-voters-modal" className="modal-toggle" checked={isOpen} readOnly />
-      <label htmlFor="show-voters-modal" className="modal cursor-pointer backdrop-blur-sm" onClick={onClose}>
-        <label className="modal-box relative max-w-3xl border border-base-content/10 shadow-2xl" onClick={e => e.stopPropagation()}>
+      <input
+        type="checkbox"
+        id="show-voters-modal"
+        className="modal-toggle"
+        checked={isOpen}
+        readOnly
+      />
+      <label
+        htmlFor="show-voters-modal"
+        className="modal cursor-pointer backdrop-blur-sm"
+        onClick={onClose}
+      >
+        <label
+          className="modal-box relative max-w-3xl border border-base-content/10 shadow-2xl"
+          onClick={(e) => e.stopPropagation()}
+        >
           {/* dummy input to capture event onclick on modal box */}
           <input className="h-0 w-0 absolute top-0 left-0" />
           <h3 className="text-xl font-bold flex items-center gap-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
@@ -123,12 +150,15 @@ const ShowVotersModal = ({
           <div className="">
             <div className="flex items-center justify-between">
               <p className="text-sm opacity-70">
-                List of all addresses that have been added as voters for this proposal.
+                List of all addresses that have been added as voters for this
+                proposal.
               </p>
               <div className="stats stats-horizontal">
                 <div className="stat py-2 px-3">
                   <div className="stat-title text-xs">Total Voters</div>
-                  <div className="stat-value text-lg">{uniqueVoters.length}</div>
+                  <div className="stat-value text-lg">
+                    {uniqueVoters.length}
+                  </div>
                 </div>
               </div>
             </div>
@@ -153,18 +183,28 @@ const ShowVotersModal = ({
                   Voter Addresses & Status
                 </div>
                 {uniqueVoters.map((voterAddress, index) => (
-                  <VoterStatus key={`${voterAddress}-${index}`} address={voterAddress} />
+                  <VoterStatus
+                    key={`${voterAddress}-${index}`}
+                    address={voterAddress}
+                  />
                 ))}
               </div>
             )}
 
             <div className="flex justify-between items-center pt-4 border-t border-base-300 mt-4">
               <div className="text-xs">
-                • <span className="text-success">Allowed</span>: Can vote in this proposal
-                <br />• <span className="text-error">Revoked</span>: Cannot vote (permissions removed)
-                <br />• <span className="text-info">Registered</span>: Has submitted their commitment
+                • <span className="text-success">Allowed</span>: Can vote in
+                this proposal
+                <br />• <span className="text-error">Revoked</span>: Cannot vote
+                (permissions removed)
+                <br />• <span className="text-info">Registered</span>: Has
+                submitted their commitment
               </div>
-              <label htmlFor="show-voters-modal" className="btn btn-primary btn-sm" onClick={() => onClose()}>
+              <label
+                htmlFor="show-voters-modal"
+                className="btn btn-primary btn-sm"
+                onClick={() => onClose()}
+              >
                 Close
               </label>
             </div>

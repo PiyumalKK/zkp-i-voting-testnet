@@ -4,7 +4,10 @@ import { useState } from "react";
 import { useAccount } from "wagmi";
 import { PlusIcon, TrashIcon, UserPlusIcon } from "@heroicons/react/24/outline";
 import { AddressInput } from "~~/components/scaffold-eth";
-import { useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
+import {
+  useScaffoldReadContract,
+  useScaffoldWriteContract,
+} from "~~/hooks/scaffold-eth";
 
 type VoterEntry = {
   address: string;
@@ -13,7 +16,9 @@ type VoterEntry = {
 
 export const AddVotersModal = () => {
   const { address: connectedAddress } = useAccount();
-  const [voters, setVoters] = useState<VoterEntry[]>([{ address: "", status: true }]);
+  const [voters, setVoters] = useState<VoterEntry[]>([
+    { address: "", status: true },
+  ]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Check if the connected user is the owner of the contract
@@ -27,7 +32,10 @@ export const AddVotersModal = () => {
   });
 
   // Only show the modal if the connected user is the owner
-  const isOwner = connectedAddress && contractOwner && connectedAddress.toLowerCase() === contractOwner.toLowerCase();
+  const isOwner =
+    connectedAddress &&
+    contractOwner &&
+    connectedAddress.toLowerCase() === contractOwner.toLowerCase();
 
   const addVoterEntry = () => {
     setVoters([...voters, { address: "", status: true }]);
@@ -56,15 +64,17 @@ export const AddVotersModal = () => {
       setIsSubmitting(true);
 
       // Filter out empty addresses
-      const validVoters = voters.filter(voter => voter.address.trim() !== "");
+      const validVoters = voters.filter((voter) => voter.address.trim() !== "");
 
       if (validVoters.length === 0) {
         alert("Please add at least one valid voter address.");
         return;
       }
 
-      const addresses = validVoters.map(voter => voter.address as `0x${string}`);
-      const statuses = validVoters.map(voter => voter.status);
+      const addresses = validVoters.map(
+        (voter) => voter.address as `0x${string}`,
+      );
+      const statuses = validVoters.map((voter) => voter.status);
 
       await writeVotingAsync({
         functionName: "addVoters",
@@ -75,7 +85,9 @@ export const AddVotersModal = () => {
       setVoters([{ address: "", status: true }]);
 
       // Close modal
-      const modal = document.getElementById("add-voters-modal") as HTMLInputElement;
+      const modal = document.getElementById(
+        "add-voters-modal",
+      ) as HTMLInputElement;
       if (modal) modal.checked = false;
     } catch (error) {
       console.error("Error adding voters:", error);
@@ -87,43 +99,67 @@ export const AddVotersModal = () => {
   return (
     <div className="relative">
       {!isOwner ? (
-        <div className="tooltip tooltip-top tooltip-primary" data-tip="Connected address is not the owner">
+        <div
+          className="tooltip tooltip-top tooltip-primary"
+          data-tip="Connected address is not the owner"
+        >
           <label className="btn btn-sm font-normal gap-1.5 btn-disabled cursor-not-allowed opacity-40">
             <UserPlusIcon className="h-4 w-4" />
             <span>Add Voters</span>
           </label>
         </div>
       ) : (
-        <label htmlFor="add-voters-modal" className="btn btn-primary btn-sm font-normal gap-1.5 shadow-sm shadow-primary/20">
+        <label
+          htmlFor="add-voters-modal"
+          className="btn btn-primary btn-sm font-normal gap-1.5 shadow-sm shadow-primary/20"
+        >
           <UserPlusIcon className="h-4 w-4" />
           <span>Add Voters</span>
         </label>
       )}
       {isOwner && (
         <>
-          <input type="checkbox" id="add-voters-modal" className="modal-toggle" />
-          <label htmlFor="add-voters-modal" className="modal cursor-pointer backdrop-blur-sm">
+          <input
+            type="checkbox"
+            id="add-voters-modal"
+            className="modal-toggle"
+          />
+          <label
+            htmlFor="add-voters-modal"
+            className="modal cursor-pointer backdrop-blur-sm"
+          >
             <label className="modal-box relative max-w-2xl border border-base-content/10 shadow-2xl">
               {/* dummy input to capture event onclick on modal box */}
               <input className="h-0 w-0 absolute top-0 left-0" />
-              <h3 className="text-xl font-bold mb-3 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Add Voters</h3>
-              <label htmlFor="add-voters-modal" className="btn btn-ghost btn-sm btn-circle absolute right-3 top-3">
+              <h3 className="text-xl font-bold mb-3 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                Add Voters
+              </h3>
+              <label
+                htmlFor="add-voters-modal"
+                className="btn btn-ghost btn-sm btn-circle absolute right-3 top-3"
+              >
                 ✕
               </label>
 
               <div className="space-y-4">
                 <p className="text-sm opacity-70">
-                  Add addresses that are allowed to vote in this proposal. You can grant or revoke voting permissions.
+                  Add addresses that are allowed to vote in this proposal. You
+                  can grant or revoke voting permissions.
                 </p>
 
                 <div className="space-y-3 max-h-96 overflow-y-auto">
                   {voters.map((voter, index) => (
-                    <div key={index} className="flex items-center gap-3 p-3 border border-base-300 rounded-lg">
+                    <div
+                      key={index}
+                      className="flex items-center gap-3 p-3 border border-base-300 rounded-lg"
+                    >
                       <div className="flex-1">
                         <AddressInput
                           placeholder="Voter Address (0x...)"
                           value={voter.address}
-                          onChange={value => updateVoterAddress(index, value as string)}
+                          onChange={(value) =>
+                            updateVoterAddress(index, value as string)
+                          }
                         />
                       </div>
 
@@ -162,16 +198,26 @@ export const AddVotersModal = () => {
                 </div>
 
                 <div className="flex justify-between items-center">
-                  <button onClick={addVoterEntry} className="btn btn-outline btn-sm gap-2">
+                  <button
+                    onClick={addVoterEntry}
+                    className="btn btn-outline btn-sm gap-2"
+                  >
                     <PlusIcon className="h-4 w-4" />
                     Add Another Voter
                   </button>
 
                   <div className="flex gap-2">
-                    <label htmlFor="add-voters-modal" className="btn btn-ghost btn-sm">
+                    <label
+                      htmlFor="add-voters-modal"
+                      className="btn btn-ghost btn-sm"
+                    >
                       Cancel
                     </label>
-                    <button onClick={handleSubmit} className="btn btn-primary btn-sm" disabled={isSubmitting}>
+                    <button
+                      onClick={handleSubmit}
+                      className="btn btn-primary btn-sm"
+                      disabled={isSubmitting}
+                    >
                       {isSubmitting ? (
                         <span className="loading loading-spinner loading-sm"></span>
                       ) : (

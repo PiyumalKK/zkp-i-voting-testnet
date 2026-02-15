@@ -20,7 +20,7 @@ export const ClearStorageButton = () => {
 
       // Filter keys that belong to this zk-voting app
       const zkVotingKeys = keys.filter(
-        key =>
+        (key) =>
           key.startsWith("zk-voting-proof-data") ||
           key.startsWith("zk-voting-commitment-data") ||
           key.startsWith("zk-voting-burner-wallet") ||
@@ -28,11 +28,14 @@ export const ClearStorageButton = () => {
       );
 
       // Remove all zk-voting related keys
-      zkVotingKeys.forEach(key => {
+      zkVotingKeys.forEach((key) => {
         localStorage.removeItem(key);
       });
 
-      console.log(`Cleared ${zkVotingKeys.length} zk-voting storage items:`, zkVotingKeys);
+      console.log(
+        `Cleared ${zkVotingKeys.length} zk-voting storage items:`,
+        zkVotingKeys,
+      );
 
       // Force page reload to reset any cached state
       window.location.reload();
@@ -71,7 +74,9 @@ export const ClearStorageButton = () => {
         ) : (
           <>
             <TrashIcon className="h-4 w-4" />
-            {showConfirm ? "⚠️ Confirm Clear Local Storage ⚠️" : "Clear Local Storage"}
+            {showConfirm
+              ? "⚠️ Confirm Clear Local Storage ⚠️"
+              : "Clear Local Storage"}
           </>
         )}
       </button>

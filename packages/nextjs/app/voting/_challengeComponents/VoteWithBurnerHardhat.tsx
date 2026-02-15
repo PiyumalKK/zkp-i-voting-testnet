@@ -1,12 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createPublicClient, createWalletClient, getContract, http } from "viem";
+import {
+  createPublicClient,
+  createWalletClient,
+  getContract,
+  http,
+} from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { hardhat } from "viem/chains";
 import { useAccount } from "wagmi";
 import { Address } from "~~/components/scaffold-eth";
-import { useDeployedContractInfo, useScaffoldEventHistory } from "~~/hooks/scaffold-eth";
+import {
+  useDeployedContractInfo,
+  useScaffoldEventHistory,
+} from "~~/hooks/scaffold-eth";
 import { useChallengeState } from "~~/services/store/challengeStore";
 import {
   hasStoredProof,
@@ -16,7 +24,7 @@ import {
 } from "~~/utils/proofStorage";
 
 ////// Checkpoint 9 //////
-import {  parseEther, createTestClient } from "viem";
+import { parseEther, createTestClient } from "viem";
 import { generatePrivateKey } from "viem/accounts";
 
 type LocalProofData = {
@@ -68,9 +76,18 @@ const sendVoteWithBurner = async ({
   return txHash;
 };
 
-export const VoteWithBurnerHardhat = ({ contractAddress }: { contractAddress?: `0x${string}` }) => {
-  const [burnerWallet, setBurnerWallet] = useState<{ address: `0x${string}`; privateKey: `0x${string}` } | null>(null);
-  const [txStatus, setTxStatus] = useState<"idle" | "pending" | "success" | "error">("idle");
+export const VoteWithBurnerHardhat = ({
+  contractAddress,
+}: {
+  contractAddress?: `0x${string}`;
+}) => {
+  const [burnerWallet, setBurnerWallet] = useState<{
+    address: `0x${string}`;
+    privateKey: `0x${string}`;
+  } | null>(null);
+  const [txStatus, setTxStatus] = useState<
+    "idle" | "pending" | "success" | "error"
+  >("idle");
   const [hasProofStored, setHasProofStored] = useState<boolean>(false);
   const [hasVoted, setHasVoted] = useState<boolean>(false);
   const { proofData, setProofData } = useChallengeState();
@@ -80,19 +97,29 @@ export const VoteWithBurnerHardhat = ({ contractAddress }: { contractAddress?: `
     ////// Checkpoint 9 //////
     const privateKey = generatePrivateKey();
     const account = privateKeyToAccount(privateKey);
-    const wallet = { address: account.address as `0x${string}`, privateKey: privateKey as `0x${string}` };
+    const wallet = {
+      address: account.address as `0x${string}`,
+      privateKey: privateKey as `0x${string}`,
+    };
 
     setBurnerWallet(wallet);
 
     const effectiveContractAddress = contractAddress || contractInfo?.address;
     if (effectiveContractAddress && userAddress) {
-      saveBurnerWalletToLocalStorage(wallet.privateKey, wallet.address, effectiveContractAddress, userAddress);
+      saveBurnerWalletToLocalStorage(
+        wallet.privateKey,
+        wallet.address,
+        effectiveContractAddress,
+        userAddress,
+      );
     }
 
     return wallet;
   };
 
-  const { data: contractInfo } = useDeployedContractInfo({ contractName: "Voting" });
+  const { data: contractInfo } = useDeployedContractInfo({
+    contractName: "Voting",
+  });
 
   const { data: voteCastEvents } = useScaffoldEventHistory({
     contractName: "Voting",
@@ -104,7 +131,9 @@ export const VoteWithBurnerHardhat = ({ contractAddress }: { contractAddress?: `
   useEffect(() => {
     if (burnerWallet?.address && voteCastEvents) {
       const hasVotedAlready = voteCastEvents.some(
-        event => event.args?.voter?.toLowerCase() === burnerWallet.address.toLowerCase(),
+        (event) =>
+          event.args?.voter?.toLowerCase() ===
+          burnerWallet.address.toLowerCase(),
       );
       setHasVoted(hasVotedAlready);
     } else {
@@ -116,12 +145,18 @@ export const VoteWithBurnerHardhat = ({ contractAddress }: { contractAddress?: `
     const checkAndLoadStoredProof = () => {
       const effectiveContractAddress = contractAddress || contractInfo?.address;
       if (effectiveContractAddress && userAddress) {
-        const proofExists = hasStoredProof(effectiveContractAddress, userAddress);
+        const proofExists = hasStoredProof(
+          effectiveContractAddress,
+          userAddress,
+        );
         setHasProofStored(proofExists);
 
         if (proofExists && !proofData) {
           try {
-            const storedProof = loadProofFromLocalStorage(effectiveContractAddress, userAddress);
+            const storedProof = loadProofFromLocalStorage(
+              effectiveContractAddress,
+              userAddress,
+            );
             if (storedProof) {
               setProofData(storedProof);
             }
@@ -135,15 +170,26 @@ export const VoteWithBurnerHardhat = ({ contractAddress }: { contractAddress?: `
     };
 
     checkAndLoadStoredProof();
-  }, [contractAddress, contractInfo?.address, userAddress, proofData, setProofData]);
+  }, [
+    contractAddress,
+    contractInfo?.address,
+    userAddress,
+    proofData,
+    setProofData,
+  ]);
 
   useEffect(() => {
     const effectiveContractAddress = contractAddress || contractInfo?.address;
     if (effectiveContractAddress && userAddress) {
       try {
-        const storedBurnerWallet = loadBurnerWalletFromLocalStorage(effectiveContractAddress, userAddress);
+        const storedBurnerWallet = loadBurnerWalletFromLocalStorage(
+          effectiveContractAddress,
+          userAddress,
+        );
         if (storedBurnerWallet) {
-          const account = privateKeyToAccount(storedBurnerWallet.privateKey as `0x${string}`);
+          const account = privateKeyToAccount(
+            storedBurnerWallet.privateKey as `0x${string}`,
+          );
           setBurnerWallet({
             privateKey: storedBurnerWallet.privateKey as `0x${string}`,
             address: account.address as `0x${string}`,
@@ -164,7 +210,9 @@ export const VoteWithBurnerHardhat = ({ contractAddress }: { contractAddress?: `
     <div className="glass-card p-6 space-y-4">
       <div className="text-center">
         <h2 className="text-xl font-bold">Submit Vote</h2>
-        <p className="text-xs text-base-content/40 mt-1">Use a local burner wallet to submit the on-chain vote with the proof</p>
+        <p className="text-xs text-base-content/40 mt-1">
+          Use a local burner wallet to submit the on-chain vote with the proof
+        </p>
       </div>
 
       {burnerWallet && (
@@ -177,7 +225,9 @@ export const VoteWithBurnerHardhat = ({ contractAddress }: { contractAddress?: `
       <div className="flex justify-center">
         <button
           className="btn btn-primary btn-lg w-full shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all duration-200"
-          disabled={!hasProofStored || !proofData || txStatus === "pending" || hasVoted}
+          disabled={
+            !hasProofStored || !proofData || txStatus === "pending" || hasVoted
+          }
           onClick={async () => {
             try {
               if (!proofData) {
@@ -188,8 +238,13 @@ export const VoteWithBurnerHardhat = ({ contractAddress }: { contractAddress?: `
               setTxStatus("pending");
 
               const wallet = burnerWallet ?? generateBurnerWallet();
-              const publicClient = createPublicClient({ chain: hardhat, transport: http("http://localhost:8545") });
-              const address = (contractAddress || contractInfo?.address) as string | undefined;
+              const publicClient = createPublicClient({
+                chain: hardhat,
+                transport: http("http://localhost:8545"),
+              });
+              const address = (contractAddress || contractInfo?.address) as
+                | string
+                | undefined;
               if (!address) throw new Error("Contract not found");
               const abi = (contractInfo?.abi as any) || [];
               const voterClient = createWalletClient({
@@ -197,7 +252,11 @@ export const VoteWithBurnerHardhat = ({ contractAddress }: { contractAddress?: `
                 chain: hardhat,
                 transport: http("http://localhost:8545"),
               });
-              const viemContract = getContract({ address: address as `0x${string}`, abi, client: voterClient });
+              const viemContract = getContract({
+                address: address as `0x${string}`,
+                abi,
+                client: voterClient,
+              });
 
               await sendVoteWithBurner({
                 viemContract,
@@ -213,7 +272,11 @@ export const VoteWithBurnerHardhat = ({ contractAddress }: { contractAddress?: `
             }
           }}
         >
-          {txStatus === "pending" ? "Voting..." : hasVoted ? "Already voted" : "Vote with burner wallet"}
+          {txStatus === "pending"
+            ? "Voting..."
+            : hasVoted
+              ? "Already voted"
+              : "Vote with burner wallet"}
         </button>
       </div>
     </div>

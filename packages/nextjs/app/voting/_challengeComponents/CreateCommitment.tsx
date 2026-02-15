@@ -6,7 +6,11 @@ import { Fr } from "@aztec/bb.js";
 import { toHex } from "viem";
 import { poseidon2 } from "poseidon-lite";
 import { useAccount } from "wagmi";
-import { useDeployedContractInfo, useScaffoldReadContract, useScaffoldWriteContract } from "~~/hooks/scaffold-eth";
+import {
+  useDeployedContractInfo,
+  useScaffoldReadContract,
+  useScaffoldWriteContract,
+} from "~~/hooks/scaffold-eth";
 import { useChallengeState } from "~~/services/store/challengeStore";
 import { saveCommitmentToLocalStorage } from "~~/utils/proofStorage";
 
@@ -42,7 +46,9 @@ interface CreateCommitmentProps {
   leafEvents?: any[];
 }
 
-export const CreateCommitment = ({ leafEvents = [] }: CreateCommitmentProps) => {
+export const CreateCommitment = ({
+  leafEvents = [],
+}: CreateCommitmentProps) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isInserting, setIsInserting] = useState(false);
   const [, setIsInserted] = useState(false);
@@ -50,7 +56,9 @@ export const CreateCommitment = ({ leafEvents = [] }: CreateCommitmentProps) => 
 
   const { address: userAddress, isConnected } = useAccount();
 
-  const { data: deployedContractData } = useDeployedContractInfo({ contractName: "Voting" });
+  const { data: deployedContractData } = useDeployedContractInfo({
+    contractName: "Voting",
+  });
 
   const { data: voterData } = useScaffoldReadContract({
     contractName: "Voting",
@@ -61,7 +69,9 @@ export const CreateCommitment = ({ leafEvents = [] }: CreateCommitmentProps) => 
   const isVoter = voterData?.[0];
   const hasRegistered = voterData?.[1];
 
-  const canRegister = Boolean(isConnected && isVoter !== false && hasRegistered !== true);
+  const canRegister = Boolean(
+    isConnected && isVoter !== false && hasRegistered !== true,
+  );
 
   const { writeContractAsync } = useScaffoldWriteContract({
     contractName: "Voting",
@@ -99,8 +109,15 @@ export const CreateCommitment = ({ leafEvents = [] }: CreateCommitmentProps) => 
       const updatedData = { ...localData, index: newIndex };
       setCommitmentData(updatedData);
       setIsInserted(true);
-      saveCommitmentToLocalStorage(updatedData, deployedContractData?.address, userAddress);
-      console.log("Commitment saved:", { nullifier: updatedData.nullifier, index: newIndex });
+      saveCommitmentToLocalStorage(
+        updatedData,
+        deployedContractData?.address,
+        userAddress,
+      );
+      console.log("Commitment saved:", {
+        nullifier: updatedData.nullifier,
+        index: newIndex,
+      });
     } catch (error) {
       console.error("Error inserting commitment:", error);
     } finally {
@@ -117,7 +134,9 @@ export const CreateCommitment = ({ leafEvents = [] }: CreateCommitmentProps) => 
     <div className="glass-card p-6 space-y-5">
       <div className="text-center">
         <h2 className="text-xl font-bold">Register for This Vote</h2>
-        <p className="text-xs text-base-content/40 mt-1">Generate your anonymous identifier and insert it into the Merkle tree</p>
+        <p className="text-xs text-base-content/40 mt-1">
+          Generate your anonymous identifier and insert it into the Merkle tree
+        </p>
       </div>
 
       <div className="flex flex-col gap-3">

@@ -9,9 +9,16 @@ import { LeanIMT } from "@zk-kit/lean-imt";
 import { toHex } from "viem";
 import { poseidon1, poseidon2 } from "poseidon-lite";
 import { useAccount } from "wagmi";
-import { useDeployedContractInfo, useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+import {
+  useDeployedContractInfo,
+  useScaffoldReadContract,
+} from "~~/hooks/scaffold-eth";
 import { useChallengeState } from "~~/services/store/challengeStore";
-import { hasStoredProof, loadCommitmentFromLocalStorage, saveProofToLocalStorage } from "~~/utils/proofStorage";
+import {
+  hasStoredProof,
+  loadCommitmentFromLocalStorage,
+  saveProofToLocalStorage,
+} from "~~/utils/proofStorage";
 import { notification } from "~~/utils/scaffold-eth";
 
 const generateProof = async (
@@ -32,7 +39,9 @@ const generateProof = async (
     const nullifierHash = poseidon1([nullifierBigInt]);
 
     // Rebuild the Merkle tree
-    const calculatedTree = new LeanIMT((a: bigint, b: bigint) => poseidon2([a, b]));
+    const calculatedTree = new LeanIMT((a: bigint, b: bigint) =>
+      poseidon2([a, b]),
+    );
 
     // Extract leaf values from events, reverse to insert oldest-first
     const leaves = _leaves.map((event: any) => event.args.value).reverse();
@@ -93,7 +102,9 @@ export const GenerateProof = ({ leafEvents = [] }: CreateCommitmentProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const { commitmentData, setProofData, voteChoice } = useChallengeState();
   const { address: userAddress, isConnected } = useAccount();
-  const { data: deployedContractData } = useDeployedContractInfo({ contractName: "Voting" });
+  const { data: deployedContractData } = useDeployedContractInfo({
+    contractName: "Voting",
+  });
 
   const [nullifierInput, setNullifierInput] = useState<string>("");
   const [secretInput, setSecretInput] = useState<string>("");
@@ -116,9 +127,14 @@ export const GenerateProof = ({ leafEvents = [] }: CreateCommitmentProps) => {
   const isVoter = voterData?.[0];
   const hasRegistered = voterData?.[1];
 
-  const canVote = Boolean(isConnected && isVoter === true && hasRegistered === true);
+  const canVote = Boolean(
+    isConnected && isVoter === true && hasRegistered === true,
+  );
 
-  const hasExistingProof = hasStoredProof(deployedContractData?.address, userAddress);
+  const hasExistingProof = hasStoredProof(
+    deployedContractData?.address,
+    userAddress,
+  );
 
   const getCircuitDataAndGenerateProof = async () => {
     setIsLoading(true);
@@ -126,7 +142,10 @@ export const GenerateProof = ({ leafEvents = [] }: CreateCommitmentProps) => {
       // Ensure commitment inputs are loaded from localStorage when available
       const storedCommitment =
         deployedContractData?.address && userAddress
-          ? loadCommitmentFromLocalStorage(deployedContractData.address, userAddress)
+          ? loadCommitmentFromLocalStorage(
+              deployedContractData.address,
+              userAddress,
+            )
           : null;
 
       // Resolve effective values immediately (don't rely on async setState)
@@ -148,7 +167,10 @@ export const GenerateProof = ({ leafEvents = [] }: CreateCommitmentProps) => {
           : (commitmentData?.index ?? storedCommitment?.index);
 
       // Update UI inputs for display (async — not used below)
-      if (storedCommitment && (!nullifierInput || !secretInput || indexInput?.trim() === "")) {
+      if (
+        storedCommitment &&
+        (!nullifierInput || !secretInput || indexInput?.trim() === "")
+      ) {
         setNullifierInput(storedCommitment.nullifier);
         setSecretInput(storedCommitment.secret);
         setIndexInput(storedCommitment.index?.toString() ?? "");
@@ -173,10 +195,16 @@ export const GenerateProof = ({ leafEvents = [] }: CreateCommitmentProps) => {
       }
 
       if (!leafEvents || leafEvents.length === 0) {
-        throw new Error("There are no commitments in the tree yet. Please insert a commitment first.");
+        throw new Error(
+          "There are no commitments in the tree yet. Please insert a commitment first.",
+        );
       }
 
-      if (!effectiveNullifier || !effectiveSecret || effectiveIndex === undefined) {
+      if (
+        !effectiveNullifier ||
+        !effectiveSecret ||
+        effectiveIndex === undefined
+      ) {
         throw new Error(
           "Missing commitment inputs. Paste your saved data or ensure you have generated & inserted a commitment.",
         );
@@ -198,14 +226,19 @@ export const GenerateProof = ({ leafEvents = [] }: CreateCommitmentProps) => {
       });
 
       saveProofToLocalStorage(
-        { proof: generatedProof.proof, publicInputs: generatedProof.publicInputs },
+        {
+          proof: generatedProof.proof,
+          publicInputs: generatedProof.publicInputs,
+        },
         deployedContractData?.address,
         voteChoice,
         userAddress,
       );
     } catch (error) {
       console.error("Error in getCircuitDataAndGenerateProof:", error);
-      notification.error((error as Error).message || "Failed to generate proof");
+      notification.error(
+        (error as Error).message || "Failed to generate proof",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -216,7 +249,8 @@ export const GenerateProof = ({ leafEvents = [] }: CreateCommitmentProps) => {
       <div className="text-center">
         <h2 className="text-xl font-bold">Generate ZK Proof</h2>
         <p className="text-xs text-base-content/40 mt-1">
-          Prove membership in the Merkle tree and bind your voting decision to the proof
+          Prove membership in the Merkle tree and bind your voting decision to
+          the proof
         </p>
       </div>
 
@@ -225,8 +259,14 @@ export const GenerateProof = ({ leafEvents = [] }: CreateCommitmentProps) => {
           <button
             type="button"
             className={`btn btn-lg w-full transition-all duration-200 ${canVote && !hasExistingProof && voteChoice !== null ? "btn-primary shadow-lg shadow-primary/20 hover:shadow-primary/40" : "btn-disabled opacity-40"}`}
-            onClick={canVote && !hasExistingProof && voteChoice !== null ? getCircuitDataAndGenerateProof : undefined}
-            disabled={isLoading || !canVote || hasExistingProof || voteChoice === null}
+            onClick={
+              canVote && !hasExistingProof && voteChoice !== null
+                ? getCircuitDataAndGenerateProof
+                : undefined
+            }
+            disabled={
+              isLoading || !canVote || hasExistingProof || voteChoice === null
+            }
           >
             {isLoading
               ? "Generating proof..."

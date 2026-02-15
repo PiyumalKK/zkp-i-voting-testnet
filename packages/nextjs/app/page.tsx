@@ -48,15 +48,17 @@ const Home: NextPage = () => {
               ZK Private Voting
             </h1>
             <p className="text-xl md:text-2xl text-base-content/60 font-light max-w-2xl mx-auto leading-relaxed">
-              Anonymous, verifiable on-chain voting powered by zero-knowledge proofs.
-              Vote without revealing your identity.
+              Anonymous, verifiable on-chain voting powered by zero-knowledge
+              proofs. Vote without revealing your identity.
             </p>
           </div>
 
           {/* Connected Address */}
           {connectedAddress && (
             <div className="glass-card inline-flex items-center gap-3 px-5 py-3 mx-auto">
-              <span className="text-sm text-base-content/50 font-medium">Connected</span>
+              <span className="text-sm text-base-content/50 font-medium">
+                Connected
+              </span>
               <div className="w-px h-4 bg-base-content/20" />
               <Address address={connectedAddress} />
             </div>
@@ -118,7 +120,9 @@ const Home: NextPage = () => {
                   </span>
                 </div>
                 <h3 className="text-lg font-bold">{feature.title}</h3>
-                <p className="text-sm text-base-content/50 leading-relaxed">{feature.description}</p>
+                <p className="text-sm text-base-content/50 leading-relaxed">
+                  {feature.description}
+                </p>
               </div>
             ))}
           </div>
@@ -132,14 +136,22 @@ const Home: NextPage = () => {
             <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto">
               <EyeSlashIcon className="w-7 h-7 text-primary" />
             </div>
-            <h2 className="text-2xl md:text-3xl font-bold">Complete Voter Privacy</h2>
+            <h2 className="text-2xl md:text-3xl font-bold">
+              Complete Voter Privacy
+            </h2>
             <p className="text-base-content/50 max-w-xl mx-auto leading-relaxed">
-              Using Noir circuits and the UltraHonk proving system, your vote is cryptographically
-              separated from your identity. Results are publicly verifiable, but individual votes
-              remain completely anonymous.
+              Using Noir circuits and the UltraHonk proving system, your vote is
+              cryptographically separated from your identity. Results are
+              publicly verifiable, but individual votes remain completely
+              anonymous.
             </p>
             <div className="flex flex-wrap gap-3 justify-center pt-2">
-              {["Noir Circuits", "Merkle Trees", "Poseidon Hashing", "On-Chain Verification"].map(tag => (
+              {[
+                "Noir Circuits",
+                "Merkle Trees",
+                "Poseidon Hashing",
+                "On-Chain Verification",
+              ].map((tag) => (
                 <span
                   key={tag}
                   className="px-4 py-1.5 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20"

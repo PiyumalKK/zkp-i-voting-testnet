@@ -9,7 +9,6 @@ import { RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { useOutsideClick, useTargetNetwork } from "~~/hooks/scaffold-eth";
 import { ShieldCheckIcon } from "@heroicons/react/24/outline";
 
-
 type HeaderMenuLink = {
   label: string;
   href: string;
@@ -18,19 +17,19 @@ type HeaderMenuLink = {
 
 export const menuLinks: HeaderMenuLink[] = [
   {
-    label: 'Dashboard',
-    href: '/'
+    label: "Dashboard",
+    href: "/",
   },
   {
-    label: 'Vote',
-    href: '/voting',
-    icon: <ShieldCheckIcon className="h-4 w-4" />
+    label: "Vote",
+    href: "/voting",
+    icon: <ShieldCheckIcon className="h-4 w-4" />,
   },
   {
-    label: 'Contracts',
-    href: '/debug',
-    icon: <BugAntIcon className="h-4 w-4" />
-  }
+    label: "Contracts",
+    href: "/debug",
+    icon: <BugAntIcon className="h-4 w-4" />,
+  },
 ];
 
 export const HeaderMenuLinks = () => {
@@ -46,7 +45,9 @@ export const HeaderMenuLinks = () => {
               href={href}
               passHref
               className={`${
-                isActive ? "bg-primary/15 text-primary font-semibold" : "text-base-content/70"
+                isActive
+                  ? "bg-primary/15 text-primary font-semibold"
+                  : "text-base-content/70"
               } hover:bg-primary/10 hover:text-primary transition-all duration-200 py-2 px-4 text-sm rounded-lg gap-2 grid grid-flow-col`}
             >
               {icon}
@@ -87,13 +88,21 @@ export const Header = () => {
             <HeaderMenuLinks />
           </ul>
         </details>
-        <Link href="/" passHref className="hidden lg:flex items-center gap-2 ml-4 mr-6 shrink-0">
+        <Link
+          href="/"
+          passHref
+          className="hidden lg:flex items-center gap-2 ml-4 mr-6 shrink-0"
+        >
           <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
             <ShieldCheckIcon className="h-5 w-5 text-primary-content" />
           </div>
           <div className="flex flex-col">
-            <span className="font-bold leading-tight text-base-content">ZK Vote</span>
-            <span className="text-[10px] text-base-content/50 tracking-wider uppercase">Private Voting</span>
+            <span className="font-bold leading-tight text-base-content">
+              ZK Vote
+            </span>
+            <span className="text-[10px] text-base-content/50 tracking-wider uppercase">
+              Private Voting
+            </span>
           </div>
         </Link>
         <ul className="hidden lg:flex lg:flex-nowrap menu menu-horizontal px-1 gap-1">

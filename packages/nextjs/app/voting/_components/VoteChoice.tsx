@@ -1,14 +1,16 @@
 import { useChallengeState } from "~~/services/store/challengeStore";
 
 export const VoteSelector = () => {
-  const voteChoice = useChallengeState(state => state.voteChoice);
-  const setVoteChoice = useChallengeState(state => state.setVoteChoice);
+  const voteChoice = useChallengeState((state) => state.voteChoice);
+  const setVoteChoice = useChallengeState((state) => state.setVoteChoice);
 
   return (
     <div className="glass-card p-6 space-y-4">
       <div className="text-center">
         <h2 className="text-xl font-bold">Choose Your Vote</h2>
-        <p className="text-xs text-base-content/40 mt-1">Select your position before generating a proof</p>
+        <p className="text-xs text-base-content/40 mt-1">
+          Select your position before generating a proof
+        </p>
       </div>
       <div className="flex gap-4 justify-center">
         <button

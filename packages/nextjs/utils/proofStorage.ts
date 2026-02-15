@@ -28,7 +28,10 @@ const PROOF_STORAGE_KEY_PREFIX = "zk-voting-proof-data";
 /**
  * Generate contract and user-specific storage key
  */
-const getStorageKey = (contractAddress?: string, userAddress?: string): string => {
+const getStorageKey = (
+  contractAddress?: string,
+  userAddress?: string,
+): string => {
   if (!contractAddress && !userAddress) {
     return `${PROOF_STORAGE_KEY_PREFIX}-default`;
   }
@@ -80,10 +83,16 @@ export const saveProofToLocalStorage = (
   userAddress?: string,
 ): void => {
   try {
-    const serialized = serializeProofData(proofData, contractAddress, voteChoice);
+    const serialized = serializeProofData(
+      proofData,
+      contractAddress,
+      voteChoice,
+    );
     const storageKey = getStorageKey(contractAddress, userAddress);
     localStorage.setItem(storageKey, JSON.stringify(serialized));
-    console.log(`Proof data saved to localStorage for contract: ${contractAddress}, user: ${userAddress}`);
+    console.log(
+      `Proof data saved to localStorage for contract: ${contractAddress}, user: ${userAddress}`,
+    );
   } catch (error) {
     console.error("Failed to save proof data to localStorage:", error);
   }
@@ -130,11 +139,16 @@ export const getStoredProofMetadata = (
 /**
  * Clear proof data from localStorage
  */
-export const clearProofFromLocalStorage = (contractAddress?: string, userAddress?: string): void => {
+export const clearProofFromLocalStorage = (
+  contractAddress?: string,
+  userAddress?: string,
+): void => {
   try {
     const storageKey = getStorageKey(contractAddress, userAddress);
     localStorage.removeItem(storageKey);
-    console.log(`Proof data cleared from localStorage for contract: ${contractAddress}, user: ${userAddress}`);
+    console.log(
+      `Proof data cleared from localStorage for contract: ${contractAddress}, user: ${userAddress}`,
+    );
   } catch (error) {
     console.error("Failed to clear proof data from localStorage:", error);
   }
@@ -143,7 +157,10 @@ export const clearProofFromLocalStorage = (contractAddress?: string, userAddress
 /**
  * Check if proof data exists in localStorage
  */
-export const hasStoredProof = (contractAddress?: string, userAddress?: string): boolean => {
+export const hasStoredProof = (
+  contractAddress?: string,
+  userAddress?: string,
+): boolean => {
   try {
     const storageKey = getStorageKey(contractAddress, userAddress);
     return localStorage.getItem(storageKey) !== null;
@@ -158,7 +175,10 @@ const COMMITMENT_STORAGE_KEY_PREFIX = "zk-voting-commitment-data";
 /**
  * Generate contract and user-specific storage key for commitments
  */
-const getCommitmentStorageKey = (contractAddress?: string, userAddress?: string): string => {
+const getCommitmentStorageKey = (
+  contractAddress?: string,
+  userAddress?: string,
+): string => {
   if (!contractAddress && !userAddress) {
     return `${COMMITMENT_STORAGE_KEY_PREFIX}-default`;
   }
@@ -188,7 +208,9 @@ export const saveCommitmentToLocalStorage = (
     };
     const storageKey = getCommitmentStorageKey(contractAddress, userAddress);
     localStorage.setItem(storageKey, JSON.stringify(serialized));
-    console.log(`Commitment data saved to localStorage for contract: ${contractAddress}, user: ${userAddress}`);
+    console.log(
+      `Commitment data saved to localStorage for contract: ${contractAddress}, user: ${userAddress}`,
+    );
   } catch (error) {
     console.error("Failed to save commitment data to localStorage:", error);
   }
@@ -208,8 +230,13 @@ export const loadCommitmentFromLocalStorage = (
 
     const serialized: SerializableCommitmentData = JSON.parse(stored);
     // Return only the commitment data without metadata
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { timestamp, contractAddress: _, userAddress: __, ...commitmentData } = serialized;
+
+    const {
+      timestamp,
+      contractAddress: _,
+      userAddress: __,
+      ...commitmentData
+    } = serialized;
     return commitmentData;
   } catch (error) {
     console.error("Failed to load commitment data from localStorage:", error);
@@ -238,11 +265,16 @@ export const getStoredCommitmentMetadata = (
 /**
  * Clear commitment data from localStorage
  */
-export const clearCommitmentFromLocalStorage = (contractAddress?: string, userAddress?: string): void => {
+export const clearCommitmentFromLocalStorage = (
+  contractAddress?: string,
+  userAddress?: string,
+): void => {
   try {
     const storageKey = getCommitmentStorageKey(contractAddress, userAddress);
     localStorage.removeItem(storageKey);
-    console.log(`Commitment data cleared from localStorage for contract: ${contractAddress}, user: ${userAddress}`);
+    console.log(
+      `Commitment data cleared from localStorage for contract: ${contractAddress}, user: ${userAddress}`,
+    );
   } catch (error) {
     console.error("Failed to clear commitment data from localStorage:", error);
   }
@@ -251,7 +283,10 @@ export const clearCommitmentFromLocalStorage = (contractAddress?: string, userAd
 /**
  * Check if commitment data exists in localStorage
  */
-export const hasStoredCommitment = (contractAddress?: string, userAddress?: string): boolean => {
+export const hasStoredCommitment = (
+  contractAddress?: string,
+  userAddress?: string,
+): boolean => {
   try {
     const storageKey = getCommitmentStorageKey(contractAddress, userAddress);
     return localStorage.getItem(storageKey) !== null;
@@ -274,7 +309,10 @@ const BURNER_WALLET_STORAGE_KEY_PREFIX = "zk-voting-burner-wallet";
 /**
  * Generate contract and user-specific storage key for burner wallets
  */
-const getBurnerWalletStorageKey = (contractAddress?: string, userAddress?: string): string => {
+const getBurnerWalletStorageKey = (
+  contractAddress?: string,
+  userAddress?: string,
+): string => {
   if (!contractAddress && !userAddress) {
     return `${BURNER_WALLET_STORAGE_KEY_PREFIX}-default`;
   }
@@ -306,7 +344,9 @@ export const saveBurnerWalletToLocalStorage = (
     };
     const storageKey = getBurnerWalletStorageKey(contractAddress, userAddress);
     localStorage.setItem(storageKey, JSON.stringify(serialized));
-    console.log(`Burner wallet saved to localStorage for contract: ${contractAddress}, user: ${userAddress}`);
+    console.log(
+      `Burner wallet saved to localStorage for contract: ${contractAddress}, user: ${userAddress}`,
+    );
   } catch (error) {
     console.error("Failed to save burner wallet to localStorage:", error);
   }
@@ -356,11 +396,16 @@ export const getStoredBurnerWalletMetadata = (
 /**
  * Clear burner wallet data from localStorage
  */
-export const clearBurnerWalletFromLocalStorage = (contractAddress?: string, userAddress?: string): void => {
+export const clearBurnerWalletFromLocalStorage = (
+  contractAddress?: string,
+  userAddress?: string,
+): void => {
   try {
     const storageKey = getBurnerWalletStorageKey(contractAddress, userAddress);
     localStorage.removeItem(storageKey);
-    console.log(`Burner wallet cleared from localStorage for contract: ${contractAddress}, user: ${userAddress}`);
+    console.log(
+      `Burner wallet cleared from localStorage for contract: ${contractAddress}, user: ${userAddress}`,
+    );
   } catch (error) {
     console.error("Failed to clear burner wallet from localStorage:", error);
   }
@@ -369,7 +414,10 @@ export const clearBurnerWalletFromLocalStorage = (contractAddress?: string, user
 /**
  * Check if burner wallet data exists in localStorage
  */
-export const hasStoredBurnerWallet = (contractAddress?: string, userAddress?: string): boolean => {
+export const hasStoredBurnerWallet = (
+  contractAddress?: string,
+  userAddress?: string,
+): boolean => {
   try {
     const storageKey = getBurnerWalletStorageKey(contractAddress, userAddress);
     return localStorage.getItem(storageKey) !== null;
@@ -393,7 +441,10 @@ const TRANSACTION_RESULT_STORAGE_KEY_PREFIX = "zk-voting-transaction-result";
 /**
  * Generate contract and user-specific storage key for transaction results
  */
-const getTransactionResultStorageKey = (contractAddress?: string, userAddress?: string): string => {
+const getTransactionResultStorageKey = (
+  contractAddress?: string,
+  userAddress?: string,
+): string => {
   if (!contractAddress && !userAddress) {
     return `${TRANSACTION_RESULT_STORAGE_KEY_PREFIX}-default`;
   }
@@ -426,7 +477,10 @@ export const saveTransactionResultToLocalStorage = (
       receipt,
       errorMessage,
     };
-    const storageKey = getTransactionResultStorageKey(contractAddress, userAddress);
+    const storageKey = getTransactionResultStorageKey(
+      contractAddress,
+      userAddress,
+    );
     localStorage.setItem(storageKey, JSON.stringify(transactionResult));
     console.log(
       `Transaction result saved to localStorage for contract: ${contractAddress}, user: ${userAddress}, success: ${success}`,
@@ -444,13 +498,19 @@ export const loadTransactionResultFromLocalStorage = (
   userAddress?: string,
 ): TransactionResult | null => {
   try {
-    const storageKey = getTransactionResultStorageKey(contractAddress, userAddress);
+    const storageKey = getTransactionResultStorageKey(
+      contractAddress,
+      userAddress,
+    );
     const stored = localStorage.getItem(storageKey);
     if (!stored) return null;
 
     return JSON.parse(stored);
   } catch (error) {
-    console.error("Failed to load transaction result from localStorage:", error);
+    console.error(
+      "Failed to load transaction result from localStorage:",
+      error,
+    );
     return null;
   }
 };
@@ -458,22 +518,39 @@ export const loadTransactionResultFromLocalStorage = (
 /**
  * Clear transaction result from localStorage
  */
-export const clearTransactionResultFromLocalStorage = (contractAddress?: string, userAddress?: string): void => {
+export const clearTransactionResultFromLocalStorage = (
+  contractAddress?: string,
+  userAddress?: string,
+): void => {
   try {
-    const storageKey = getTransactionResultStorageKey(contractAddress, userAddress);
+    const storageKey = getTransactionResultStorageKey(
+      contractAddress,
+      userAddress,
+    );
     localStorage.removeItem(storageKey);
-    console.log(`Transaction result cleared from localStorage for contract: ${contractAddress}, user: ${userAddress}`);
+    console.log(
+      `Transaction result cleared from localStorage for contract: ${contractAddress}, user: ${userAddress}`,
+    );
   } catch (error) {
-    console.error("Failed to clear transaction result from localStorage:", error);
+    console.error(
+      "Failed to clear transaction result from localStorage:",
+      error,
+    );
   }
 };
 
 /**
  * Check if transaction result exists in localStorage
  */
-export const hasStoredTransactionResult = (contractAddress?: string, userAddress?: string): boolean => {
+export const hasStoredTransactionResult = (
+  contractAddress?: string,
+  userAddress?: string,
+): boolean => {
   try {
-    const storageKey = getTransactionResultStorageKey(contractAddress, userAddress);
+    const storageKey = getTransactionResultStorageKey(
+      contractAddress,
+      userAddress,
+    );
     return localStorage.getItem(storageKey) !== null;
   } catch {
     return false;

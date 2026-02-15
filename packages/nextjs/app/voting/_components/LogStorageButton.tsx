@@ -12,7 +12,9 @@ import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
 export const LogStorageButton = () => {
   const [isLogging, setIsLogging] = useState(false);
   const { address: userAddress } = useAccount();
-  const { data: contractInfo } = useDeployedContractInfo({ contractName: "Voting" });
+  const { data: contractInfo } = useDeployedContractInfo({
+    contractName: "Voting",
+  });
 
   const logAllVotingStorage = () => {
     setIsLogging(true);
@@ -57,7 +59,9 @@ export const LogStorageButton = () => {
       if (proofRaw) {
         try {
           const proofData = JSON.parse(proofRaw);
-          const proofArray = Array.isArray(proofData.proof) ? proofData.proof : [];
+          const proofArray = Array.isArray(proofData.proof)
+            ? proofData.proof
+            : [];
           console.log("\nProof (full array):", proofArray);
         } catch {
           console.log("\nProof: (failed to parse)");

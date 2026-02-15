@@ -34,15 +34,17 @@ type ChallengeState = {
   setVoteChoice: (choice: boolean | null) => void;
 };
 
-export const useChallengeState = create<ChallengeState>(set => ({
+export const useChallengeState = create<ChallengeState>((set) => ({
   nativeCurrency: {
     price: 0,
     isFetching: true,
   },
   commitmentData: null,
-  setCommitmentData: (data: CommitmentData | null) => set(() => ({ commitmentData: data })),
+  setCommitmentData: (data: CommitmentData | null) =>
+    set(() => ({ commitmentData: data })),
   proofData: null,
   setProofData: (data: ProofData | null) => set(() => ({ proofData: data })),
   voteChoice: null,
-  setVoteChoice: (choice: boolean | null) => set(() => ({ voteChoice: choice })),
+  setVoteChoice: (choice: boolean | null) =>
+    set(() => ({ voteChoice: choice })),
 }));

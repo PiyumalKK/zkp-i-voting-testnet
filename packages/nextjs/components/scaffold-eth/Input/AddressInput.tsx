@@ -9,7 +9,13 @@ import { CommonInputProps, InputBase, isENS } from "~~/components/scaffold-eth";
 /**
  * Address input with ENS name resolution
  */
-export const AddressInput = ({ value, name, placeholder, onChange, disabled }: CommonInputProps<Address | string>) => {
+export const AddressInput = ({
+  value,
+  name,
+  placeholder,
+  onChange,
+  disabled,
+}: CommonInputProps<Address | string>) => {
   // Debounce the input to keep clean RPC calls when resolving ENS names
   // If the input is an address, we don't need to debounce it
   const [_debouncedValue] = useDebounceValue(value, 500);
@@ -90,7 +96,9 @@ export const AddressInput = ({ value, name, placeholder, onChange, disabled }: C
       prefix={
         ensName ? (
           <div className="flex bg-base-300 rounded-l-full items-center">
-            {isEnsAvatarLoading && <div className="skeleton bg-base-200 w-[35px] h-[35px] rounded-full shrink-0"></div>}
+            {isEnsAvatarLoading && (
+              <div className="skeleton bg-base-200 w-[35px] h-[35px] rounded-full shrink-0"></div>
+            )}
             {ensAvatar ? (
               <span className="w-[35px]">
                 {
@@ -99,7 +107,9 @@ export const AddressInput = ({ value, name, placeholder, onChange, disabled }: C
                 }
               </span>
             ) : null}
-            <span className="text-accent px-2">{enteredEnsName ?? ensName}</span>
+            <span className="text-accent px-2">
+              {enteredEnsName ?? ensName}
+            </span>
           </div>
         ) : (
           (isEnsNameLoading || isEnsAddressLoading) && (
@@ -112,8 +122,16 @@ export const AddressInput = ({ value, name, placeholder, onChange, disabled }: C
       }
       suffix={
         // Don't want to use nextJS Image here (and adding remote patterns for the URL)
-        // eslint-disable-next-line @next/next/no-img-element
-        value && <img alt="" className="rounded-full!" src={blo(value as `0x${string}`)} width="35" height="35" />
+
+        value && (
+          <img
+            alt=""
+            className="rounded-full!"
+            src={blo(value as `0x${string}`)}
+            width="35"
+            height="35"
+          />
+        )
       }
     />
   );
